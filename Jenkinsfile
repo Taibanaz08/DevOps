@@ -1,24 +1,45 @@
-
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "taibanaz/myweb:v2"
+    }
+
     stages {
 
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                echo 'Cloning repository'
+                git branch: 'main', url: 'https://github.com/Taibanaz08/DevOps.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t myweb:v1 .'
+                bat 'docker build -t myweb:v2 .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Push Docker Image') {
             steps {
-                bat 'docker run -d --rm -p 8090:80 --name myweb-container myweb:v1'
+                bat 'docker push myweb:v2'
+            }
+        }
+
+        stage('Load Image to Kind') {
+            steps {
+                bat 'kind load docker-image myweb:v2 --name devops-cluster'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat 'kubectl set image deployment/myweb-deployment myweb=myweb:v2'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                bat 'kubectl rollout status deployment/myweb-deployment'
             }
         }
     }
