@@ -44,6 +44,18 @@ pipeline {
             }
         }
 
+        stage('Check User') {
+            steps {
+                bat 'whoami'
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                bat 'docker info'
+            }
+        }
+
         stage('Verify Deployment') {
             steps {
                 bat 'kubectl rollout status deployment/myweb-deployment'
