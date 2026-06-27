@@ -22,10 +22,12 @@ pipeline {
 
         stage('Push Image to DockerHub') {
             steps {
-                bat "docker login -u taibanaz -p your_password"
-                bat "docker push %IMAGE%"
-            }
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+            bat "echo %PASS% | docker login -u %USER% --password-stdin"
+            bat "docker push taibanaz/myweb:v2"
         }
+    }
+}
 
         stage('Deploy to K8s') {
             steps {
