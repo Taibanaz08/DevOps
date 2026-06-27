@@ -26,7 +26,7 @@ pipeline {
             usernameVariable: 'DOCKER_USER',
             passwordVariable: 'DOCKER_PASS'
         )]) {
-            bat 'echo taiba@123| docker login -u taibanaz --password-stdin'
+            bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
             bat 'docker push taibanaz/myweb:v2'
         }
     }
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Load Image to Kind') {
             steps {
-                bat 'kind load docker-image taibanaz/myweb:v2 --name devops-cluster'
+                bat '"C:\\Users\\vsoft\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Kubernetes.kind_Microsoft.Winget.Source_8wekyb3d8bbwe\\kind.exe"  load docker-image taibanaz/myweb:v2 --name devops-cluster'
             }
         }
 
