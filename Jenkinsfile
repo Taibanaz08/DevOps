@@ -20,10 +20,17 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-            steps {
-                bat 'docker push taibanaz/myweb:v2'
-            }
+             steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'dockerhub',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )]) {
+            bat 'echo taiba@123| docker login -u taibanaz --password-stdin'
+            bat 'docker push taibanaz/myweb:v2'
         }
+    }
+}
 
         stage('Load Image to Kind') {
             steps {
