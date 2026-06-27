@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "taibanaz/myweb:v2"
-        KUBECONFIG = "C:\\Users\\vsoft\\.kube\\config"
+        IMAGE = "taibanaz/myweb:v2"
     }
 
     stages {
@@ -15,25 +14,30 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
-                bat "docker build -t %IMAGE_NAME% ."
+                bat "docker build -t %IMAGE% ."
             }
         }
 
-        stage('Load Image to Kind') {
+        stage('Push Image to DockerHub') {
             steps {
-        bat "kind load docker-image taibanaz/myweb:v2 --name devops-cluster"
-    }
-}
+                bat "docker login -u taibanaz -p your_password"
+                bat "docker push %IMAGE%"
+            }
+        }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy to K8s') {
             steps {
-                bat """
-                set KUBECONFIG=%KUBECONFIG%
-                kubectl set image deployment/myweb-deployment myweb=%IMAGE_NAME%
-                kubectl rollout status deployment/myweb-deployment
-                """
+                bat "kubectl set image deployment/myweb-deployment myweb=%IMAGE%"
+                bat "kubectl rollout status deployment/myweb-deployment"
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                bat "kubectl get pods"
+                bat "kubectl get svc"
             }
         }
     }
