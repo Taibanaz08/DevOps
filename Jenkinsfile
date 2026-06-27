@@ -3,62 +3,36 @@ pipeline {
 
     environment {
         IMAGE_NAME = "taibanaz/myweb:v2"
+        KUBECONFIG = "C:\\Users\\vsoft\\.kube\\config"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Taibanaz08/DevOps.git'
+                git 'https://github.com/Taibanaz08/DevOps.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t taibanaz/myweb:v2 .'
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
-        stage('Push Docker Image') {
-             steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub',
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-        )]) {
-            bat 'echo Username=%DOCKER_USER%'
-            bat 'echo PasswordLength && echo %DOCKER_PASS%'
-        }
-    }
-}
-
         stage('Load Image to Kind') {
             steps {
-                bat '"C:\\Users\\vsoft\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Kubernetes.kind_Microsoft.Winget.Source_8wekyb3d8bbwe\\kind.exe"  load docker-image taibanaz/myweb:v2 --name devops-cluster'
+                bat "\"C:\\Users\\vsoft\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Kubernetes.kind_*.exe\" load docker-image %IMAGE_NAME% --name devops-cluster"
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl set image deployment/myweb-deployment myweb=taibanaz/myweb:v2'
-            }
-        }
-
-        stage('Check User') {
-            steps {
-                bat 'whoami'
-            }
-        }
-
-        stage('Check Docker') {
-            steps {
-                bat 'docker info'
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                bat 'kubectl rollout status deployment/myweb-deployment'
+                bat """
+                set KUBECONFIG=%KUBECONFIG%
+                kubectl set image deployment/myweb-deployment myweb=%IMAGE_NAME%
+                kubectl rollout status deployment/myweb-deployment
+                """
             }
         }
     }
