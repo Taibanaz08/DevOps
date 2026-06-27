@@ -23,9 +23,9 @@ pipeline {
 
         stage('Load Image to Kind') {
             steps {
-                bat "\"C:\\Users\\vsoft\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Kubernetes.kind_*.exe\" load docker-image %IMAGE_NAME% --name devops-cluster"
-            }
-        }
+        bat "kind load docker-image taibanaz/myweb:v2 --name devops-cluster"
+    }
+}
 
         stage('Deploy to Kubernetes') {
             steps {
