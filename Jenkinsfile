@@ -27,7 +27,7 @@ pipeline {
                     bat "docker logout"
 
                     // IMPORTANT: Windows friendly login (no stdin issue)
-                    bat "docker login -u %USER% -p %PASS%"
+                    bat 'echo %PASS% | docker login -u %USER% --password-stdin'
 
                 }
             }
