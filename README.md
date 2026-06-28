@@ -62,6 +62,7 @@ Users
 - Jenkinsfile
 - deployment.yaml
 - service.yaml
+- pod.yaml
 - README.md
 
 ---
@@ -172,7 +173,6 @@ kubectl apply -f deployment.yaml
 
 bash
 kubectl apply -f service.yaml
-
 
 ### Verify Pods
 
