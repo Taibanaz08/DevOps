@@ -33,7 +33,7 @@ Users
 
 # Technologies Used
 
-- AWS EC2
+- Git & Github
 - Jenkins
 - Git & GitHub
 - Docker
