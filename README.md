@@ -76,14 +76,6 @@ Shows the Docker image created for this project.
 
 ---
 
-## Docker Containers
-
-Shows the running Docker container.
-
-![](screenshots/docker-containers.png)
-
----
-
 ## Jenkins Pipeline Success
 
 Shows the successful Jenkins pipeline execution.
@@ -96,7 +88,7 @@ Shows the successful Jenkins pipeline execution.
 
 Shows all running Kubernetes Pods.
 
-![](screenshots/kubernetes-pods.png)
+![](screenshots/k8s-pods.png)
 
 ---
 
@@ -104,7 +96,7 @@ Shows all running Kubernetes Pods.
 
 Shows the deployment created in Kubernetes.
 
-![](screenshots/kubernetes-deployment.png)
+![](screenshots/k8s-deployment.png)
 
 ---
 
@@ -112,7 +104,7 @@ Shows the deployment created in Kubernetes.
 
 Shows the Kubernetes service exposing the application.
 
-![](screenshots/kubernetes-service.png)
+![](screenshots/k8s-service.png)
 
 ---
 
@@ -198,36 +190,6 @@ kubectl get deployments
 
 bash
 kubectl get svc
-
-
----
-
-# Deliverables
-
-✅ Dockerfile
-
-✅ Jenkinsfile
-
-✅ Kubernetes Manifests
-
-✅ Architecture Diagram
-
-✅ Docker Images Screenshot
-
-✅ Docker Containers Screenshot
-
-✅ Jenkins Pipeline Screenshot
-
-✅ Kubernetes Pods Screenshot
-
-✅ Kubernetes Deployment Screenshot
-
-✅ Kubernetes Service Screenshot
-
-✅ Answers to Questions
-
-✅ Complete CI/CD Flow
-
 ---
 
 # Author
