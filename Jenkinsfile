@@ -2,37 +2,48 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "taibanaz/myweb:v2"
+        IMAGE_NAME = "taibanaz/myweb:v2"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'main',
                 url: 'https://github.com/Taibanaz08/DevOps.git'
             }
         }
 
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
-                bat "docker build -t %IMAGE% ."
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
-        stage('Push Image to DockerHub') {
+        stage('Docker Login') {
             steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-            bat "echo %PASS% | docker login -u %USER% --password-stdin"
-            bat "docker push taibanaz/myweb:v2"
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    bat "echo %PASS% | docker login -u %USER% --password-stdin"
+                }
+            }
         }
-    }
-}
 
-        stage('Deploy to K8s') {
+        stage('Push Image') {
             steps {
-                bat "kubectl set image deployment/myweb-deployment myweb=%IMAGE%"
-                bat "kubectl rollout status deployment/myweb-deployment"
+                bat "docker push %IMAGE_NAME%"
+            }
+        }
+
+        stage('Load Image to Kind') {
+            steps {
+                bat "kind load docker-image %IMAGE_NAME% --name devops-cluster"
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat "kubectl apply -f deployment.yaml"
+                bat "kubectl apply -f service.yaml"
             }
         }
 
