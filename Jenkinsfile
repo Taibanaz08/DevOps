@@ -9,8 +9,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/Taibanaz08/DevOps.git'
+                git branch: 'main', url: 'https://github.com/Taibanaz08/DevOps.git'
             }
         }
 
@@ -34,12 +33,6 @@ pipeline {
             }
         }
 
-        stage('Load Image to Kind') {
-            steps {
-                bat "kind load docker-image %IMAGE_NAME% --name devops-cluster"
-            }
-        }
-
         stage('Deploy to Kubernetes') {
             steps {
                 bat "kubectl apply -f deployment.yaml"
@@ -47,11 +40,20 @@ pipeline {
             }
         }
 
-        stage('Verify') {
+        stage('Verify Deployment') {
             steps {
                 bat "kubectl get pods"
                 bat "kubectl get svc"
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline SUCCESS 🚀 Application deployed successfully"
+        }
+        failure {
+            echo "Pipeline FAILED ❌ Check logs"
         }
     }
 }
