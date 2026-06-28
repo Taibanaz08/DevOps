@@ -21,12 +21,18 @@ pipeline {
         }
 
         stage('Docker Login') {
-            steps {
+           steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    bat "docker login -u %USER% --password-stdin"
+                    
+                    bat "docker logout"
+
+                    // IMPORTANT: Windows friendly login (no stdin issue)
+                    bat "docker login -u %USER% -p %PASS%"
+
                 }
             }
         }
+
 
         stage('Push Image') {
             steps {
