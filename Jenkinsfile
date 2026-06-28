@@ -9,45 +9,42 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Taibanaz08/DevOps.git'
+                git url: 'https://github.com/Taibanaz08/DevOps.git', branch: 'main'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t taibanaz/myweb:v2 ."
+                bat "docker build -t %IMAGE_NAME% ."
             }
         }
 
-        
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    
+                    bat "docker logout"
+
+                    // IMPORTANT: Windows friendly login (no stdin issue)
+                    bat "docker login -u %USER% -p %PASS%"
+
+                }
+            }
+        }
 
         stage('Push Image') {
             steps {
-                bat "docker push taibanaz/myweb:v2"
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                bat "kubectl apply -f deployment.yaml"
-                bat "kubectl apply -f service.yaml"
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                bat "kubectl get pods"
-                bat "kubectl get svc"
+                bat "docker push %IMAGE_NAME%"
             }
         }
     }
 
     post {
         success {
-            echo "Pipeline SUCCESS 🚀 Application deployed successfully"
+            echo "✅ Pipeline SUCCESS - Image pushed to DockerHub"
         }
         failure {
-            echo "Pipeline FAILED ❌ Check logs"
+            echo "❌ Pipeline FAILED - Check logs"
         }
     }
 }
